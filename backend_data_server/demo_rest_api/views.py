@@ -12,12 +12,19 @@ from firebase_admin import credentials, db
 
 def get_firebase_db():
     key_path = os.path.join(settings.BASE_DIR, 'firebase_key.json')
+    if not os.path.exists(key_path):
+        # Si está en el directorio raíz del proyecto (junto al manage.py superior)
+        key_path = os.path.join(settings.BASE_DIR.parent, 'firebase_key.json')
+    if not os.path.exists(key_path):
+        raise FileNotFoundError(f"No se encontró el archivo firebase_key.json ni en {settings.BASE_DIR} ni en {settings.BASE_DIR.parent}")
     if not firebase_admin._apps:
         cred = credentials.Certificate(key_path)
         firebase_admin.initialize_app(cred, {
             'databaseURL': 'https://landing-92a81-default-rtdb.firebaseio.com/'
         })
     return db
+
+
 
 
 class DemoRestApi(APIView):
