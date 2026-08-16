@@ -29,15 +29,17 @@ class LandingAPI(APIView):
     def get(self, request, collection=None):
         try:
             firebase_db = get_firebase_db()
-            target_collection = collection if collection else self.collection_name
-            # Referencia a la colección
-            ref = firebase_db.reference(f'{target_collection}')
-            # get: Obtiene todos los elementos de la colección
+            # Si acceden a index/ o landing/, consultar la raíz '/' de Firebase para incluir mensajes y noticias
+            if collection in [None, 'index', 'landing']:
+                ref = firebase_db.reference('/')
+            else:
+                ref = firebase_db.reference(f'{collection}')
+            
             data = ref.get()
-            # Devuelve un arreglo JSON
             return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': f'Error al obtener datos de Firebase: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def post(self, request, collection=None):
         try:
