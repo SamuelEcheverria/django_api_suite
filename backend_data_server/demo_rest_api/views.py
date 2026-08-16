@@ -44,6 +44,13 @@ class DemoRestApiItem(APIView):
                 return item
         return None
 
+    def get(self, request, id):
+        item = self.get_item_by_id(id)
+        if item is None:
+            return Response({'error': 'Elemento no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(item, status=status.HTTP_200_OK)
+
+
     def put(self, request, id):
         item = self.get_item_by_id(id)
         if item is None:
