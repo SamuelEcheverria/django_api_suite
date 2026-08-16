@@ -125,6 +125,7 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "homepage" / "static",
 ]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR.parent / "assets"
+
 
 
