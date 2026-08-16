@@ -26,11 +26,12 @@ class LandingAPI(APIView):
     name = "Landing API"
     collection_name = "landing"
 
-    def get(self, request):
+    def get(self, request, collection=None):
         try:
             firebase_db = get_firebase_db()
+            target_collection = collection if collection else self.collection_name
             # Referencia a la colección
-            ref = firebase_db.reference(f'{self.collection_name}')
+            ref = firebase_db.reference(f'{target_collection}')
             # get: Obtiene todos los elementos de la colección
             data = ref.get()
             # Devuelve un arreglo JSON
@@ -38,12 +39,13 @@ class LandingAPI(APIView):
         except Exception as e:
             return Response({'error': f'Error al obtener datos de Firebase: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def post(self, request):
+    def post(self, request, collection=None):
         try:
             data = request.data
             firebase_db = get_firebase_db()
+            target_collection = collection if collection else self.collection_name
             # Referencia a la colección
-            ref = firebase_db.reference(f'{self.collection_name}')
+            ref = firebase_db.reference(f'{target_collection}')
 
             current_time = datetime.now()
             custom_format = current_time.strftime("%d/%m/%Y, %I:%M:%S %p").lower().replace('am', 'a. m.').replace('pm', 'p. m.')
