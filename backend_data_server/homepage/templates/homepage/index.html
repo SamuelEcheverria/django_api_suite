@@ -1,76 +1,74 @@
+{% load static %}
 <!DOCTYPE html>
-
-<html>
+<html lang="es">
 
 <head>
   <meta charset="UTF-8">
-  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <title>Backend</title>
   <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
 
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
 
-<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="dawm2" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/_downloads/86066345483e4df73bb9af2546b9024a/index.html" /><meta name="readthedocs-http-status" content="200" /></head>
+<body class="bg-gray-100 min-h-screen flex flex-col font-['Inter',sans-serif]">
+  <!-- Header Navbar -->
+  <header class="flex items-center justify-between whitespace-nowrap border-b border-gray-200 bg-white px-10 py-4 shadow-sm">
+    <div class="flex items-center gap-3 text-gray-900">
+      <div class="w-6 h-6 text-indigo-600">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path>
+        </svg>
+      </div>
+      <h2 class="text-gray-900 text-lg font-bold tracking-tight">Backend</h2>
+    </div>
+    <div class="flex items-center gap-6">
+      <a class="text-gray-700 hover:text-indigo-600 text-sm font-medium transition-colors" href="/demo/rest/api/index/">Demo REST API</a>
+      <a class="text-gray-700 hover:text-indigo-600 text-sm font-medium transition-colors" href="/admin/">Admin</a>
+    </div>
+  </header>
 
-<body>
-  <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden"
-    style='font-family: Inter, "Noto Sans", sans-serif;'>
-    <div class="layout-container flex h-full grow flex-col">
-      <header
-        class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f5] px-10 py-3">
-        <div class="flex items-center gap-4 text-[#111418]">
-          <div class="size-4">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path>
-            </svg>
-          </div>
-          <h2 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">Backend</h2>
+  <!-- Main Content Area -->
+  <main class="flex-1 flex items-center justify-center p-6 bg-gray-50">
+    <div class="w-full max-w-4xl bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
+      <div class="flex flex-col md:flex-row">
+        <!-- Image Container -->
+        <div class="h-48 md:h-auto md:w-1/2 bg-gray-100 relative">
+          <img class="object-cover w-full h-full" 
+               src="{% static 'homepage/img/hero_tech.jpg' %}" 
+               alt="Oficina / Backend Data Server" />
         </div>
-        <div class="flex flex-1 justify-end gap-8">
-          <div class="flex items-center gap-9"><a class="text-[#111418] text-sm font-medium leading-normal"
-              href="/demo/rest/api/index/">Demo REST API</a></div>
-          <div class="flex items-center gap-9"><a class="text-[#111418] text-sm font-medium leading-normal"
-              href="/landing/api/index/">Landing API</a></div>
-        </div>
-      </header>
-      <div class="flex items-center min-h-[90vh] p-6 bg-gray-50 dark:bg-gray-900">
-
-        <div class="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
-          <div class="flex flex-col overflow-y-auto md:flex-row">
-            <div class="h-32 md:h-auto md:w-1/2">
-              <img aria-hidden="true" class="object-cover w-full h-full dark:hidden" 
-                src="./assets/img/team.jpg"
-                alt="Office" />
-              <img aria-hidden="true" class="hidden object-cover w-full h-full dark:block" 
-                src="./assets/img/team.jpg"
-                alt="Office" />
+        
+        <!-- Text Container -->
+        <div class="flex items-center justify-center p-8 md:w-1/2">
+          <div class="w-full">
+            <h1 class="mb-4 text-2xl font-bold text-gray-800 border-b pb-2 border-gray-100">
+              Backend
+            </h1>
+            <p class="text-gray-600 leading-relaxed text-sm">
+              Aquí encontrarás herramientas y servicios esenciales para la gestión de datos, autenticación,
+              procesamiento de solicitudes, y mucho más.
+            </p>
+            <p class="mt-3 text-gray-600 leading-relaxed text-sm">
+              Cada aplicación que forma parte de este entorno ha sido desarrollada con el objetivo de optimizar el
+              rendimiento, la seguridad y la escalabilidad de nuestros sistemas. Ya sea que estés monitoreando
+              servicios, accediendo a APIs o gestionando recursos, este portal es tu punto de partida.
+            </p>
+            
+            <div class="mt-6 pt-4 border-t border-gray-100 flex items-center gap-3">
+              <a href="/demo/rest/api/" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors">
+                Ir a Demo REST API
+              </a>
             </div>
-            <div class="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
-              <div class="w-full">
-                <h1 class="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">
-                  Backend
-                </h1>
-                <p class="mb-4 text-gray-600 dark:text-gray-400">
-                  Aquí encontrarás herramientas y servicios esenciales para la gestión de datos, autenticación,
-                  procesamiento de solicitudes, y mucho más.
-
-                  Cada aplicación que forma parte de este entorno ha sido desarrollada con el objetivo de optimizar el
-                  rendimiento, la seguridad y la escalabilidad de nuestros sistemas. Ya sea que estés monitoreando
-                  servicios, accediendo a APIs o gestionando recursos, este portal es tu punto de partida.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
-
       </div>
     </div>
-  </div>
+  </main>
 </body>
 
 </html>

@@ -1,88 +1,71 @@
+import os
+from pathlib import Path
+from django.conf import settings
 from django.shortcuts import render
-# Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-import uuid
+import firebase_admin
+from firebase_admin import credentials, db
 
 
-data_list = []
-
-
-data_list.append({'id': str(uuid.uuid4()), 'name': 'User01', 'email': 'user01@example.com', 'is_active': True})
-data_list.append({'id': str(uuid.uuid4()), 'name': 'User02', 'email': 'user02@example.com', 'is_active': True})
-data_list.append({'id': str(uuid.uuid4()), 'name': 'User03', 'email': 'user03@example.com', 'is_active': False})  # Ejemplo de item inactivo
+def get_firebase_db():
+    key_path = os.path.join(settings.BASE_DIR, 'firebase_key.json')
+    if not firebase_admin._apps:
+        cred = credentials.Certificate(key_path)
+        firebase_admin.initialize_app(cred, {
+            'databaseURL': 'https://landing-92a81-default-rtdb.firebaseio.com/'
+        })
+    return db
 
 
 class DemoRestApi(APIView):
     name = "Demo REST API"
 
     def get(self, request):
-        active_items = [item for item in data_list if item.get('is_active', False)]
-        return Response(active_items, status=status.HTTP_200_OK)
+        try:
+            firebase_db = get_firebase_db()
+            ref = firebase_db.reference('/')
+            data = ref.get()
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': f'Error al conectar con Firebase: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        data = request.data
+        try:
+            data = request.data
+            if not data:
+                return Response({'error': 'No se proporcionaron datos para guardar.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if 'name' not in data or 'email' not in data:
-            return Response({'error': 'Faltan campos requeridos.'}, status=status.HTTP_400_BAD_REQUEST)
+            firebase_db = get_firebase_db()
+            # Guardar en el nodo 'mensajes' o en la colección enviada en el payload
+            target_node = data.get('node', 'mensajes')
+            ref = firebase_db.reference(target_node)
+            new_ref = ref.push(data)
 
-        data['id'] = str(uuid.uuid4())
-        data['is_active'] = True
-        data_list.append(data)
-
-        return Response({'message': 'Dato guardado exitosamente.', 'data': data}, status=status.HTTP_201_CREATED)
+            return Response({
+                'message': 'Dato guardado exitosamente en Firebase.',
+                'id': new_ref.key,
+                'data': data
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': f'Error al guardar en Firebase: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class DemoRestApiItem(APIView):
-    name = "Demo REST API Item"
+    name = "Demo REST API Item (Firebase)"
 
-    def get_item_by_id(self, item_id):
-        for item in data_list:
-            if item.get('id') == item_id:
-                return item
-        return None
-
-    def put(self, request, item_id):
-        item = self.get_item_by_id(item_id)
-        if item is None:
-            return Response({'error': 'Elemento no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
-
-        data = request.data
-        if 'id' not in data or data.get('id') != item_id:
-            return Response({'error': 'El campo id es obligatorio y debe coincidir con la ruta.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        updated_item = {
-            'id': item_id,
-            'name': data.get('name'),
-            'email': data.get('email'),
-            'is_active': data.get('is_active', item.get('is_active', True)),
-        }
-
-        index = data_list.index(item)
-        data_list[index] = updated_item
-
-        return Response({'message': 'Elemento reemplazado correctamente.', 'data': updated_item}, status=status.HTTP_200_OK)
-
-    def patch(self, request, item_id):
-        item = self.get_item_by_id(item_id)
-        if item is None:
-            return Response({'error': 'Elemento no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
-
-        data = request.data
-        for key, value in data.items():
-            if key == 'id':
-                continue
-            item[key] = value
-
-        return Response({'message': 'Elemento actualizado parcialmente.', 'data': item}, status=status.HTTP_200_OK)
-
-    def delete(self, request, item_id):
-        item = self.get_item_by_id(item_id)
-        if item is None:
-            return Response({'error': 'Elemento no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
-
-        item['is_active'] = False
-
-        return Response({'message': 'Elemento eliminado lógicamente.', 'data': item}, status=status.HTTP_200_OK)
+    def get(self, request, item_id):
+        try:
+            firebase_db = get_firebase_db()
+            ref = firebase_db.reference(f'mensajes/{item_id}')
+            data = ref.get()
+            if data is None:
+                ref = firebase_db.reference(f'landing/{item_id}')
+                data = ref.get()
+            if data is None:
+                return Response({'error': 'Elemento no encontrado en Firebase.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
